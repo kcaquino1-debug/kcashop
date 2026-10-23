@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KCA Shop — Clothing & Accessories</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', serif;
+        }
+        img { max-width: 100%; height: auto; }
+        :root {
+            --bg: #caf0f8;
+            --accent: #0077b6;
+            --dark: #03045e;
+            --text: #2b2d42;
+            --heart: #e63980;
+            --success: #2d6a4f;
+            --pending: #f59e0b;
+            --delivered: #10b981;
+            --cancelled: #ef4444;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* Auth Pages */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #90e0ef, #caf0f8);
+        }
+        .auth-box {
+            background: white;
+            padding: 2.2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 420px;
+        }
+        .auth-box h1 {
+            color: var(--dark);
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .auth-box h1 span { color: var(--heart); }
+        .auth-box > p { text-align: center; margin-bottom: 1.5rem; color: #666; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .form-group input, .form-group textarea, select {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 0.3rem;
+        }
+        .auth-btn:hover {
+            background: var(--dark);
+            transform: translateY(-2px);
+        }
+        .switch-form {
+            text-align: center;
+            margin-top: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .switch-form a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .message {
+            margin-top: 0.8rem;
+            padding: 0.7rem;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        .error { background: #ffe6e6; color: #c0392b; display: block; }
+        .success { background: #e6ffcc; color: #2d6a4f; display: block; }
+        .hidden-form { display: none; }
+
+        /* Main Website */
+        #main-site { display: none; }
+        nav {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--dark);
+            cursor: pointer;
+        }
+        .logo span { color: var(--heart); }
+        .nav-links { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .nav-links a, .logout-btn, .cart-btn, .admin-btn {
+            margin-left: 0.5rem;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .cart-btn {
+            background: var(--accent);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: none;
+            position: relative;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--heart);
+            color: white;
+            font-size: 0.75rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .admin-btn {
+            background: #7c3aed;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: none;
+        }
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 1rem;
+        }
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--accent);
+            display: inline-block;
+            padding-bottom: 0.3rem;
+        }
+        .hero {
+            text-align: center;
+            padding: 2rem 2rem 3rem;
+        }
+        .flyer-img {
+            max-width: 900px;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            margin-bottom: 2rem;
+        }
+        .hero h1 { font-size: 3rem; color: var(--dark); }
+        .hero h1 span { color: var(--heart); }
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 1rem auto;
+        }
+        .tagline {
+            font-style: italic;
+            font-size: 1.3rem;
+            margin-top: 1rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Products */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+        }
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            transition: 0.3s;
+        }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-img {
+            height: 200px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        .product-info { padding: 1.2rem; }
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        .product-desc { font-size: 0.9rem; color: #666; margin-bottom: 0.8rem; }
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        .add-cart-btn {
+            width: 100%;
+            padding: 0.7rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .add-cart-btn:hover { background: var(--dark); }
+
+        /* Cart & Orders */
+        .cart-item, .order-card {
+            background: white;
+            padding: 1.2rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .cart-qty {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+        .cart-qty button {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .remove-btn {
+            background: #d62828;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        .cart-total {
+            text-align: right;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin-top: 1rem;
+        }
+        .checkout-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        .back-btn {
+            background: #666;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        /* Admin Panel */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .stat-card h3 { font-size: 2rem; color: var(--accent); }
+        .stat-card p { color: #666; }
+        .order-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-processing { background: #dbeafe; color: #1d4ed8; }
+        .status-delivered { background: #d1fae5; color: #059669; }
+        .status-cancelled { background: #fee2e2; color: #dc2626; }
+        .update-status {
+            margin-top: 0.8rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .confirm-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+
+        /* Checkout & Confirmation */
+        .checkout-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .confirmation {
+            text-align: center;
+            padding: 3rem;
+        }
+        .confirmation h2 {
+            border: none;
+            display: block;
+            color: var(--success);
+        }
+
+        /* About & Others */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+        .offer-item, .reason-item {
+            margin: 1.2rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            font-size: 1.05rem;
+        }
+        .highlight-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            font-size: 1.1rem;
+        }
+        .thankyou {
+            text-align: center;
+            background: #90e0ef;
+            padding: 2rem;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin: 2rem 0;
+        }
+        .contact-info p {
+            margin: 0.8rem 0;
+            font-size: 1.05rem;
+        }
+        .contact-info a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        .page { display: none; }
+        .page.active { display: block; }
+        @media(max-width: 768px) {
+            .two-col { grid-template-columns: 1fr; }
+            .nav-links a:not(.cart-btn):not(.admin-btn):not(.logout-btn) { display: none; }
+            .hero h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login / Register -->
+    <div id="auth-page" class="auth-container">
+        <div class="auth-box" id="login-form-box">
+            <h1>KCA Shop <span>♥</span></h1>
+            <p>Sign in to start shopping</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-user">Username</label>
+                    <input type="text" id="login-user" placeholder="Your username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-pass">Password</label>
+                    <input type="password" id="login-pass" placeholder="Your password" required>
+                </div>
+                <button type="submit" class="auth-btn">Sign In</button>
+                <div id="login-msg" class="message error"></div>
+            </form>
+            <div class="switch-form">
+                Don't have an account? <a href="#" onclick="showRegister()">Create Account</a>
+            </div>
+        </div>
+
+        <div class="auth-box hidden-form" id="register-form-box">
+            <h1>KCA Shop <span>♥</span></h1>
+            <p>Join us & start shopping!</p>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="reg-user">Username</label>
+                    <input type="text" id="reg-user" placeholder="Pick a username" required minlength="3">
+                </div>
+                <div class="form-group">
+                    <label for="reg-pass">Password</label>
+                    <input type="password" id="reg-pass" placeholder="Min. 6 characters" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="reg-confirm">Confirm Password</label>
+                    <input type="password" id="reg-confirm" placeholder="Re-enter password" required>
+                </div>
+                <button type="submit" class="auth-btn">Create Account</button>
+                <div id="register-msg" class="message"></div>
+            </form>
+            <div class="switch-form">
+                Already have account? <a href="#" onclick="showLogin()">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Shop -->
+    <div id="main-site">
+        <nav>
+            <div class="nav-container">
+                <div class="logo" onclick="showPage('home')">KCA Shop <span>♥</span></div>
+                <div class="nav-links">
+                    <a href="#" onclick="showPage('home')">Shop</a>
+                    <a href="#" onclick="showPage('about')">About</a>
+                    <button class="cart-btn" onclick="showPage('cart')">
+                        🛒 Cart <span id="cart-count" class="cart-badge">0</span>
+                    </button>
+                    <button id="admin-nav-btn" class="admin-btn" onclick="showPage('admin')" style="display:none;">
+                        ⚙️ Admin
+                    </button>
+                    <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Home / Products Page -->
+        <div id="home-page" class="page active">
+            <section class="hero">
+                <img src="brochure.png" alt="KCA Shop — Clothing & Accessories" class="flyer-img">
+                <h1>KCA Shop <span>♥</span></h1>
+                <p><strong>CLOTHING & ACCESSORIES</strong></p>
+                <p>Trendy, high-quality finds at budget-friendly prices. Look good, feel confident, express your style!</p>
+                <p class="tagline">"Style that fits you. Quality you can trust." ♥</p>
+            </section>
+
+            <section>
+                <h2>🛍️ Our Products</h2>
+                <div class="products-grid" id="products-grid"></div>
+            </section>
+        </div>
+
+        <!-- Cart Page -->
+        <div id="cart-page" class="page">
+            <section>
+                <button class="back-btn" onclick="showPage('home')">← Continue Shopping</button>
+                <h2>🛒 Your Cart</h2>
+                <div id="cart-items"></div>
+                <div id="cart-empty" style="text-align:center; padding:3rem; color:#666;">
+                    Your cart is empty. Start shopping! 👗
+                </div>
+                <div id="cart-summary" style="display:none;">
+                    <p class="cart-total">Total: ₱<span id="cart-total-amount">0.00</span></p>
+                    <button class="checkout-btn" onclick="showPage('checkout')">Proceed to Checkout →</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Checkout Page -->
+        <div id="checkout-page" class="page">
+            <section>
+                <button class="back-btn" onclick="showPage('cart')">← Back to Cart</button>
+                <h2>📦 Checkout</h2>
+                <div class="checkout-form">
+                    <form id="checkout-form">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="ship-name" required placeholder="Your full name">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone / Contact Number</label>
+                            <input type="tel" id="ship-phone" required placeholder="09XX-XXX-XXXX">
+                        </div>
+                        <div class="form-group">
+                            <label>Complete Delivery Address</label>
+                            <textarea id="ship-address" rows="3" required placeholder="House No., Street, Barangay, City, Province"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Method</label>
+                            <select id="payment-method">
+                                <option value="gcash">GCash</option>
+                                <option value="cod">Cash on Delivery</option>
+                                <option value="bank">Bank Transfer</option>
+                            </select>
+                        </div>
+                        <div style="margin:1.5rem 0; padding:1rem; background:#f0f0f0; border-radius:10px;">
+                            <strong>Order Total: ₱<span id="checkout-total">0.00</span></strong>
+                        </div>
+                        <button type="submit" class="auth-btn">✅ Place Order</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+        <!-- Confirmation Page -->
+        <div id="confirmation-page" class="page">
+            <section class="confirmation">
+                <h2>✅ Order Placed!</h2>
+                <p style="font-size:1.2rem; margin:1rem 0;">Thank you for ordering from KCA Shop ♥</p>
+                <p>We will contact you within 24 hours for payment & delivery details.</p>
+                <p style="margin:2rem 0; font-weight:bold;">Order Reference: <span id="order-ref"></span></p>
+                <button class="auth-btn" onclick="showPage('home')" style="max-width:300px;">Back to Shopping</button>
+            </section>
+        </div>
+
+        <!-- ADMIN PANEL — IKAW LANG MAKAKAKITA NITO! -->
+        <div id="admin-page" class="page">
+            <section>
+                <div class="admin-header">
+                    <h2>⚙️ Admin Panel — KCA Shop</h2>
+                    <button class="back-btn" onclick="showPage('home')">← Back to Shop</button>
+                </div>
+
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <h3 id="stat-total-orders">0</h3>
+                        <p>Total Orders</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="stat-pending">0</h3>
+                        <p>Pending</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="stat-revenue">₱0</h3>
+                        <p>Total Sales</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="stat-users">0</h3>
+                        <p>Registered Users</p>
+                    </div>
+                </div>
+
+                <h3>📋 All Orders</h3>
+                <div id="admin-orders-list"></div>
+                <div id="admin-no-orders" style="text-align:center; padding:3rem; color:#666;">
+                    No orders yet. Waiting for first order... 📦
+                </div>
+            </section>
+        </div>
+
+        <!-- About Page -->
+        <div id="about-page" class="page">
+            <section>
+                <h2>About ♥ KCA Shop</h2>
+                <div class="highlight-box" style="margin-bottom:3rem;">
+                    <p>KCA Shop is an online store that offers trendy, high-quality clothing and accessories at affordable prices. Our goal is to help you look good, feel confident, and express your unique style every day.</p>
+                </div>
+
+                <div class="two-col">
+                    <div>
+                        <h2>WHAT WE OFFER</h2>
+                        <div class="offer-item">
+                            <span>👕</span>
+                            <div><strong>Stylish & comfortable clothes</strong><br>for daily wear.</div>
+                        </div>
+                        <div class="offer-item">
+                            <span>👜</span>
+                            <div><strong>Bags, caps & accessories</strong><br>to complete your look.</div>
+                        </div>
+                        <div class="offer-item">
+                            <span>💰</span>
+                            <div><strong>Quality at budget-friendly prices.</strong></div>
+                        </div>
+                        <div class="offer-item">
+                            <span>✅</span>
+                            <div><strong>Carefully selected items</strong><br>for our customers.</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h2>WHY CHOOSE US?</h2>
+                        <div class="reason-item">
+                            <span>🏅</span>
+                            <div><strong>GOOD QUALITY</strong><br>Every item made with care.</div>
+                        </div>
+                        <div class="reason-item">
+                            <span>💵</span>
+                            <div><strong>BUDGET FRIENDLY</strong><br>Affordable without losing quality.</div>
+                        </div>
+                        <div class="reason-item">
+                            <span>💗</span>
+                            <div><strong>MADE WITH LOVE</strong><br>We listen to what you love.</div>
+                        </div>
+                        <div class="reason-item">
+                            <span>🚚</span>
+                            <div><strong>FAST & RELIABLE</strong><br>Quick response & fast shipping.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="thankyou">THANK YOU FOR SUPPORTING OUR SMALL BUSINESS ♥</div>
+
+                <h2>Contact Us</h2>
+                <div class="highlight-box contact-info" style="max-width: 600px; margin: 0 auto;">
+                    <p>📞 Phone: <strong>+63 994-321-5261</strong></p>
+                    <p>📧 Email: <a href="mailto:kcashop.business@gmail.com">kcashop.business@gmail.com</a></p>
+                    <p>📘 Facebook: <a href="https://facebook.com/kcashop" target="_blank">facebook.com/kcashop</a></p>
+                    <p>📍 Location: <strong>Marikina City, Philippines</strong></p>
+                </div>
+            </section>
+
+            <footer>
+                <p><strong>LOOK GOOD. FEEL GOOD. SHOP KCA.</strong></p>
+                <p>&copy; 2026 KCA Shop — All Rights Reserved ♥</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // ============= SETTINGS — ITAGO MO ITO SA SARILI MO LANG! =============
+        const ADMIN_USER = "admin";
+        const ADMIN_PASS = "kcaadmin2026";
+
+        // PRODUCTS — palitan mo ito gamit ang sarili mong items!
+        const products = [
+            { id: 1, name: "Basic Casual Tee", desc: "Comfortable everyday shirt", price: 299, icon: "👕" },
+            { id: 2, name: "Classic Cap", desc: "Stylish cap for daily look", price: 199, icon: "🧢" },
+            { id: 3, name: "Canvas Tote Bag", desc: "Simple & eco-friendly bag", price: 249, icon: "👜" },
+            { id: 4, name: "Polo Shirt", desc: "Smart casual wear", price: 399, icon: "👔" },
+            { id: 5, name: "Fashion Accessories Set", desc: "Complete your outfit", price: 149, icon: "✨" },
+            { id: 6, name: "Everyday Denim", desc: "Comfortable & stylish pants", price: 450, icon: "👖" }
+        ];
+
+        // ============= AUTH FUNCTIONS =============
+        const authPage = document.getElementById("auth-page");
+        const mainSite = document.getElementById("main-site");
+
+        function showRegister() {
+            document.getElementById("login-form-box").classList.add("hidden-form");
+            document.getElementById("register-form-box").classList.remove("hidden-form");
+            clearMessages();
+        }
+        function showLogin() {
+            document.getElementById("register-form-box").classList.add("hidden-form");
+            document.getElementById("login-form-box").classList.remove("hidden-form");
+            clearMessages();
+        }
+        function clearMessages() {
+            document.getElementById("login-msg").style.display = "none";
+            document.getElementById("register-msg").style.display = "none";
+        }
+        function getUsers() {
+            const users = localStorage.getItem("kcashop_users");
+            return users ? JSON.parse(users) : {};
+        }
+        function saveUsers(users) {
+            localStorage.setItem("kcashop_users", JSON.stringify(users));
+        }
+        function isAdmin() {
+            return localStorage.getItem("kcashop_current_user") === ADMIN_USER;
+        }
+        function showMainApp() {
+            authPage.style.display = "none";
+            mainSite.style.display = "block";
+            renderProducts();
+            updateCartUI();
+            updateAdminNav();
+        }
+        function showAuth() {
+            mainSite.style.display = "none";
+            authPage.style.display = "flex";
+            showLogin();
+        }
+        function updateAdminNav() {
+            document.getElementById("admin-nav-btn").style.display = isAdmin() ? "inline-block" : "none";
+        }
+        function logout() {
+            localStorage.removeItem("kcashop_logged_in");
+            localStorage.removeItem("kcashop_current_user");
+            showAuth();
+        }
+
+        // Register
+        document.getElementById("register-form").addEventListener("submit", e => {
+            e.preventDefault();
+            const user = document.getElementById("reg-user").value.trim();
+            const pass = document.getElementById("reg-pass").value;
+            const confirm = document.getElementById("reg-confirm").value;
+            const msg = document.getElementById("register-msg");
+            const users = getUsers();
+
+            if (user === ADMIN_USER) {
+                msg.className = "message error";
+                msg.textContent = "❌ Reserved username! Pick another.";
+                return;
+            }
+            if (user.length < 3) {
+                msg.className = "message error";
+                msg.textContent = "❌ Username at least 3 letters!";
+                return;
+            }
+            if (pass.length < 6) {
+                msg.className = "message error";
+                msg.textContent = "❌ Password at least 6 characters!";
+                return;
+            }
+            if (pass !== confirm) {
+                msg.className = "message error";
+                msg.textContent = "❌ Passwords do not match!";
+                return;
+            }
+            if (users[user]) {
+                msg.className = "message error";
+                msg.textContent = "❌ Username already exists!";
+                return;
+            }
+            users[user] = pass;
+            saveUsers(users);
+            msg.className = "message success";
+            msg.textContent = "✅ Account created! Signing in...";
+            setTimeout(() => {
+                document.getElementById("login-user").value = user;
+                document.getElementById("login-pass").value = pass;
+                showLogin();
+            }, 1500);
+        });
+
+        // Login
+        document.getElementById("login-form").addEventListener("submit", e => {
+            e.preventDefault();
+            const user = document.getElementById("login-user").value.trim();
+            const pass = document.getElementById("login-pass").value;
+            const msg = document.getElementById("login-msg");
+            const users = getUsers();
+
+            // Admin Login
+            if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                localStorage.setItem("kcashop_logged_in", "admin");
+                localStorage.setItem("kcashop_current_user", ADMIN_USER);
+                showMainApp();
+                return;
+            }
+            // Customer Login
+            if (users[user] && users[user] === pass) {
+                localStorage.setItem("kcashop_logged_in", user);
+                localStorage.setItem("kcashop_current_user", user);
+                showMainApp();
+            } else {
+                msg.className = "message error";
+                msg.textContent = "❌ Incorrect username or password!";
+            }
+        });
+
+        // ============= CART FUNCTIONS =============
+        function getCart() {
+            const cart = localStorage.getItem("kcashop_cart");
+            return cart ? JSON.parse(cart) : [];
+        }
+        function saveCart(cart) {
+            localStorage.setItem("kcashop_cart", JSON.stringify(cart));
+            updateCartUI();
+        }
+        function addToCart(productId) {
+            const cart = getCart();
+            const idx = cart.findIndex(i => i.id === productId);
+            if (idx !== -1) cart[idx].qty += 1;
+            else {
+                const p = products.find(x => x.id === productId);
+                cart.push({ id: p.id, name: p.name, price: p.price, qty: 1 });
+            }
+            saveCart(cart);
+            alert("✅ Added to cart!");
+        }
+        function updateQty(productId, delta) {
+            const cart = getCart();
+            const idx = cart.findIndex(i => i.id === productId);
+            if (idx !== -1) {
+                cart[idx].qty += delta;
+                if (cart[idx].qty <= 0) cart.splice(idx, 1);
+            }
+            saveCart(cart);
+            renderCart();
+        }
+        function removeItem(productId) {
+            saveCart(getCart().filter(i => i.id !== productId));
+            renderCart();
+        }
+        function getTotal() {
+            return getCart().reduce((sum, i) => sum + (i.price * i.qty), 0);
+        }
+        function updateCartUI() {
+            document.getElementById("cart-count").textContent = getCart().reduce((n, i) => n + i.qty, 0);
+        }
+
+        // ============= ORDER FUNCTIONS =============
+        function getOrders() {
+            const orders = localStorage.getItem("kcashop_orders");
+            return orders ? JSON.parse(orders) : [];
+        }
+        function saveOrder(newOrder) {
+            const orders = getOrders();
+            orders.unshift(newOrder);
+            localStorage.setItem("kcashop_orders", JSON.stringify(orders));
+        }
+        function updateOrderStatus(orderId, newStatus) {
+            const orders = getOrders();
+            const idx = orders.findIndex(o => o.id === orderId);
+            if (idx !== -1) {
+                orders[idx].status = newStatus;
+                localStorage.setItem("kcashop_orders", JSON.stringify(orders));
+                renderAdminOrders();
+            }
+        }
+        function deleteOrder(orderId) {
+            if (!confirm("Delete this order?")) return;
+            const orders = getOrders().filter(o => o.id !== orderId);
+            localStorage.setItem("kcashop_orders", JSON.stringify(orders));
+            renderAdminOrders();
+        }
+
+        // ============= RENDER FUNCTIONS =============
+        function renderProducts() {
+            const grid = document.getElementById("products-grid");
+            grid.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <div class="product-img">${p.icon}</div>
+                    <div class="product-info">
+                        <h3 class="product-name">${p.name}</h3>
+                        <p class="product-desc">${p.desc}</p>
+                        <p class="product-price">₱${p.price.toFixed(2)}</p>
+                        <button class="add-cart-btn" onclick="addToCart(${p.id})">🛒 Add to Cart</button>
+                    </div>
+                </div>
+            `).join("");
+        }
+        function renderCart() {
+            const cart = getCart();
+            const itemsDiv = document.getElementById("cart-items");
+            const emptyDiv = document.getElementById("cart-empty");
+            const summaryDiv = document.getElementById("cart-summary");
+
+            if (cart.length === 0) {
+                itemsDiv.innerHTML = "";
+                emptyDiv.style.display = "block";
+                summaryDiv.style.display = "none";
+                return;
+            }
+            emptyDiv.style.display = "none";
+            summaryDiv.style.display = "block";
+            itemsDiv.innerHTML = cart.map(i => `
+                <div class="cart-item">
+                    <div>
+                        <h4 style="font-weight:bold;">${i.name}</h4>
+                        <p>₱${i.price.toFixed(2)} each</p>
+                    </div>
+                    <div class="cart-qty">
+                        <button onclick="updateQty(${i.id}, -1)">−</button>
+                        <span>${i.qty}</span>
+                        <button onclick="updateQty(${i.id}, 1)">+</button>
+                    </div>
+                    <div>
+                        <strong>₱${(i.price * i.qty).toFixed(2)}</strong>
+                    </div>
+                    <button class="remove-btn" onclick="removeItem(${i.id})">Remove</button>
+                </div>
+            `).join("");
+            document.getElementById("cart-total-amount").textContent = getTotal().toFixed(2);
+            document.getElementById("checkout-total").textContent = getTotal().toFixed(2);
+        }
+        function renderAdminOrders() {
+            if (!isAdmin()) return;
+            
+            const orders = getOrders();
+            const listDiv = document.getElementById("admin-orders-list");
+            const noOrdersDiv = document.getElementById("admin-no-orders");
+
+            // Update Stats
+            document.getElementById("stat-total-orders").textContent = orders.length;
+            document.getElementById("stat-pending").textContent = orders.filter(o => o.status === "pending").length;
+            document.getElementById("stat-revenue").textContent = "₱" + orders.reduce((s, o) => s + o.total, 0).toFixed(2);
+            document.getElementById("stat-users").textContent = Object.keys(getUsers()).length;
+
+            if (orders.length === 0) {
+                listDiv.innerHTML = "";
+                noOrdersDiv.style.display = "block";
+                return;
+            }
+            noOrdersDiv.style.display = "none";
+            listDiv.innerHTML = orders.map(o => `
+                <div class="order-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:0.8rem;">
+                        <h4 style="font-size:1.1rem;">📦 ${o.id}</h4>
+                        <span class="order-status status-${o.status}">${o.status.toUpperCase()}</span>
+                    </div>
+                    <p><strong>Customer:</strong> ${o.name}</p>
+                    <p><strong>Phone:</strong> ${o.phone}</p>
+                    <p><strong>Address:</strong> ${o.address}</p>
+                    <p><strong>Payment:</strong> ${o.payment}</p>
+                    <p><strong>Items:</strong></p>
+                    <ul style="margin-left:1.5rem; margin-bottom:0.5rem;">
+                        ${o.items.map(i => `<li>${i.name} × ${i.qty} = ₱${(i.price*i.qty).toFixed(2)}</li>`).join("")}
+                    </ul>
+                    <p style="font-weight:bold; font-size:1.1rem;">Total: ₱${o.total.toFixed(2)}</p>
+                    <p style="font-size:0.85rem; color:#888;">Ordered by: ${o.customerUser || 'guest'}</p>
+                    
+                    ${isAdmin() ? `
+                    <div style="margin-top:0.8rem;">
+                        <select class="update-status" id="status-${o.id}">
+                            <option value="pending" ${o.status==='pending'?'selected':''}>⏳ Pending</option>
+                            <option value="processing" ${o.status==='processing'?'selected':''}>🔄 Processing</option>
+                            <option value="delivered" ${o.status==='delivered'?'selected':''}>✅ Delivered</option>
+                            <option value="cancelled" ${o.status==='cancelled'?'selected':''}>❌ Cancelled</option>
+                        </select>
+                        <button class="confirm-btn" onclick="updateOrderStatus('${o.id}', document.getElementById('status-${o.id}').value)">Save</button>
+                        <button class="delete-btn" onclick="deleteOrder('${o.id}')">Delete</button>
+                    </div>
+                    ` : ''}
+                </div>
+            `).join("");
+        }
+
+        // ============= PAGE NAVIGATION =============
+        function showPage(pageName) {
+            document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+            document.getElementById(pageName + "-page").classList.add("active");
+            
+            if (pageName === "cart") renderCart();
+            if (pageName === "checkout") {
+                if (getCart().length === 0) {
+                    alert("Your cart is empty!");
+                    showPage("home");
+                    return;
+                }
+            }
+            if (pageName === "admin") {
+                if (!isAdmin()) {
+                    alert("⛔ Only admin can access this page!");
+                    showPage("home");
+                    return;
+                }
+                renderAdminOrders();
+            }
+        }
+
+        // Checkout submit
+        document.getElementById("checkout-form").addEventListener("submit", e => {
+            e.preventDefault();
+            
+            const cart = getCart();
+            if (cart.length === 0) return;
+
+            const ref = "KCA-" + Date.now().toString(36).toUpperCase();
+            const newOrder = {
+                id: ref,
+                customerUser: localStorage.getItem("kcashop_current_user") || "guest",
+                name: document.getElementById("ship-name").value,
+                phone: document.getElementById("ship-phone").value,
+                address: document.getElementById("ship-address").value,
+                payment: document.getElementById("payment-method").value.toUpperCase(),
+                items: cart,
+                total: getTotal(),
+                status: "pending",
+                date: new Date().toISOString()
+            };
+
+            saveOrder(newOrder);
+            localStorage.removeItem("kcashop_cart");
+            updateCartUI();
+            
+            document.getElementById("order-ref").textContent = ref;
+            showPage("confirmation");
+        });
+
+        // Check login on load
+        function checkLogin() {
+            const loggedUser = localStorage.getItem("kcashop_logged_in");
+            if (loggedUser) {
+                showMainApp();
+            }
+        }
+        checkLogin();
+    </script>
+</body>
+</html>
